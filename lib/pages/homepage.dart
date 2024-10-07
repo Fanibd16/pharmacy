@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:pharmacy/map/flutter_map.dart';
-// import 'package:paybirr/utility/horiontal_card.dart';
-// import 'package:paybirr/pages/search_page.dart';
 import 'package:pharmacy/pages/search_page.dart';
 import 'package:pharmacy/utility/horiontal_card.dart';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:intl/intl.dart'; // Import the intl package for date formatting
 
 class HomePage extends StatefulWidget {
   final String firstName; // Changed from email to first name
@@ -25,6 +25,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the current date
+    String currentDate = DateFormat('dd MMM, yyyy').format(DateTime.now());
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -51,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Hi, ${widget.firstName}',
+                                'Hi, ${widget.firstName}', // Greet the user
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 24,
@@ -59,21 +62,26 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              const Text(
-                                '22 Jan , 2024',
-                                style: TextStyle(color: Colors.white38),
+                              Text(
+                                currentDate, // Display current date
+                                style: const TextStyle(color: Colors.white38),
                               ),
                             ],
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.all(12),
-                            child: const Icon(
-                              IconlyBold.notification,
-                              color: Colors.white,
+                          GestureDetector(
+                            onTap: () {
+                              showNoNotificationDialog(context);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.all(12),
+                              child: const Icon(
+                                IconlyBold.notification,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ],
@@ -101,7 +109,6 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(width: 10),
                               Text('Search'),
                               Spacer(),
-                              // Icon(IconlyLight.scan),
                             ],
                           ),
                         ),
@@ -111,9 +118,9 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Expanded(
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      borderRadius: const BorderRadius.vertical(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
                         top: Radius.circular(40.0),
                       ),
                     ),
@@ -137,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                             tabs: [
                               Tab(
                                 child: Text(
-                                  'Poplar',
+                                  'Popular',
                                   style: TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.bold,
@@ -178,4 +185,13 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+Future<void> showNoNotificationDialog(BuildContext context) async {
+  await showOkAlertDialog(
+    context: context,
+    title: 'Notification',
+    message: 'No notification',
+    okLabel: 'OK',
+  );
 }

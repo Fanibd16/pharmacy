@@ -2,16 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:iconly/iconly.dart';
-// import 'package:pharmacy/map/flutter_map.dart';
-// import 'package:pharmacy_app/map/flutter_map.dart';
-// import 'package:pharmacy_app/map/map.dart';
-// import 'package:pharmacy/pages/bookmark.dart';
+import 'package:pharmacy/pages/history_page.dart';
 import 'package:pharmacy/pages/homepage.dart';
-// import 'package:pharmacy/pages/map.dart';
 import 'package:pharmacy/pages/profile.dart';
-// import 'package:pharmacy/pages/map.dart';
-// import 'package:pharmacy/pages/map.dart';
 import 'package:pharmacy/pages/qr_sacan_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum _SelectedTab { home, add, favorite, person }
 
@@ -25,15 +20,45 @@ class IndexPage extends StatefulWidget {
 
 class _IndexPageState extends State<IndexPage> {
   _SelectedTab _selectedTab = _SelectedTab.home;
+  String firstName = '';
+  String fullName = '';
 
-  // Extract first name from JWT token
-  String _getFirstNameFromToken(String token) {
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    // String fullName = decodedToken['name'] ; // Assuming 'name' field contains the full name
-    String fullName = decodedToken['name'] ??
-        "User"; // Assuming 'name' field contains the full name
-    return fullName.split(' ')[0]; // Get the first name
+  @override
+  void initState() {
+    super.initState();
+    _getFirstNameFromToken(widget.token); // Fetch the first name on init
   }
+
+Future<void> _getFirstNameFromToken(String token) async {
+  try {
+    // Decode the JWT token
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+
+    // Get the full name from the decoded token, defaulting to "User" if not found
+    String fullName = decodedToken['fullName'] ?? "User";
+
+    // Split the full name by spaces
+    List<String> nameParts = fullName.split(' ');
+
+    // Extract the first name (if it exists)
+    String firstName = nameParts.isNotEmpty ? nameParts[0] : "User";
+
+    // Save the first name to SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('firstName', firstName); // Save first name
+    await prefs.setString('fullName', fullName); // Save full name
+
+    // Update the state with the fetched first name and full name
+    setState(() {
+      this.firstName = firstName;
+      this.fullName = fullName;
+    });
+  } catch (e) {
+    // Handle any exceptions that occur during token decoding or preferences saving
+    print('Error decoding token or saving preferences: $e');
+  }
+}
+
 
   void _handleIndexChanged(int index) {
     setState(() {
@@ -42,18 +67,15 @@ class _IndexPageState extends State<IndexPage> {
   }
 
   Widget _getPageForTab(_SelectedTab tab) {
-    String firstName = _getFirstNameFromToken(widget.token);
     switch (tab) {
       case _SelectedTab.home:
         return HomePage(firstName: firstName);
       case _SelectedTab.add:
         return const UniversalBarcodeScanner();
       case _SelectedTab.favorite:
-        return const SettingsPage();
+        return const HistoryScreen();
       case _SelectedTab.person:
-        return const SettingsPage();
-      // return MapScreen();
-      // return const MapScreen();
+        return SettingsPage(fullName: fullName);
       default:
         return const SizedBox.shrink();
     }
@@ -78,8 +100,8 @@ class _IndexPageState extends State<IndexPage> {
             title: const Text('Scan'),
           ),
           FlashyTabBarItem(
-            icon: const Icon(IconlyLight.bookmark),
-            title: const Text('Bookmark'),
+            icon: const Icon(IconlyLight.activity),
+            title: const Text('History'),
           ),
           FlashyTabBarItem(
             icon: const Icon(IconlyLight.profile),
@@ -90,12 +112,3 @@ class _IndexPageState extends State<IndexPage> {
     );
   }
 }
-
-// class QRViewExample extends StatelessWidget {
-//   const QRViewExample({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }

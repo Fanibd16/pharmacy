@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-// import 'package:paybirr/pages/registration_page.dart';
 
-class BookmarkScreen extends StatefulWidget {
-  const BookmarkScreen({Key? key}) : super(key: key);
+class HistoryScreen extends StatefulWidget {
+  const HistoryScreen({super.key});
 
   @override
-  _BookmarkScreenState createState() => _BookmarkScreenState();
+  _HistoryScreenState createState() => _HistoryScreenState();
 }
 
-class _BookmarkScreenState extends State<BookmarkScreen> {
+class _HistoryScreenState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +27,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             child: const Padding(
               padding: EdgeInsets.only(top: 60.0, left: 22),
               child: Text(
-                'Bookmark',
+                'History',
                 style: TextStyle(
                     fontSize: 30,
                     color: Colors.white,
@@ -49,13 +48,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               width: double.infinity,
               child: const SingleChildScrollView(
                 // Wrap content in scrollable view
-                child: Padding(
-                  padding: EdgeInsets.only(left: 18.0, right: 18),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 30),
-                    ],
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 18.0, right: 18),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Center(child: Text('No History!!'))],
+                    ),
                   ),
                 ),
               ),

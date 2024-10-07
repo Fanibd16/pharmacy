@@ -188,61 +188,36 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        
+      ),
       body: currentLocation == null
           ? const Center(child: Text('Loading...'))
-          : Stack(
-              children: [
-                FlutterMap(
-                  mapController: mapController,
-                  options: MapOptions(
-                    initialCenter: LatLng(currentLocation!.latitude!,
-                        currentLocation!.longitude!),
-                    initialZoom: 15.0,
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      subdomains: const ['a', 'b', 'c'],
-                    ),
-                    MarkerLayer(markers: markers),
-                    if (routePoints.isNotEmpty)
-                      PolylineLayer(
-                        polylines: [
-                          Polyline(
-                              points: routePoints,
-                              strokeWidth: 4.0,
-                              color: const Color(0xff674ff4)),
-                        ],
-                      ),
+          : FlutterMap(
+            mapController: mapController,
+            options: MapOptions(
+              initialCenter: LatLng(currentLocation!.latitude!,
+                  currentLocation!.longitude!),
+              initialZoom: 15.0,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate:
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                subdomains: const ['a', 'b', 'c'],
+              ),
+              MarkerLayer(markers: markers),
+              if (routePoints.isNotEmpty)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                        points: routePoints,
+                        strokeWidth: 4.0,
+                        color: const Color(0xff674ff4)),
                   ],
                 ),
-                GestureDetector(
-                  onTap: () {
-                    // Navigator.pop(context); // This will navigate back
-                    Navigator.pop(context);
-                  },
-                  child: Positioned(
-                    top: 30,
-                    left: 12,
-                    child: Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: const Color(0xff674ff4).withOpacity(0.6),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.arrow_back, // Back arrow icon
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            ],
+          ),
     );
   }
 }

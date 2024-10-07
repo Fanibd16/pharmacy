@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
+// import 'package:jwt_decoder/jwt_decoder.dart';
 // import 'package:paybirr/pages/indexpage.dart';
 import 'dart:convert';
 // import 'package:paybirr/pages/registration_page.dart';
@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     final response = await http.post(
-      Uri.parse('http://172.23.0.1:4000/api/auth/login'),
+      Uri.parse('http://172.23.32.1:4000/api/auth/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

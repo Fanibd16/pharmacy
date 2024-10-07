@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pharmacy/map/map_search_screen.dart';
-import 'package:pharmacy/pages/qr_sacan_page.dart';
+// import 'package:pharmacy/pages/qr_sacan_page.dart';
 
 const List<String> _medicines = <String>[
   'Paracetamol',

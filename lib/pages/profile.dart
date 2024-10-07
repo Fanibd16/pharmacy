@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pharmacy/pages/login_page.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  final String fullName;
+
+  const SettingsPage({super.key, required this.fullName});
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -102,12 +105,39 @@ class _SettingsPageState extends State<SettingsPage> {
               const SizedBox(
                 height: 45.5,
               ),
-              const Text(
-                'Account',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.only(top: 8, left: 12, right: 12),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Profile',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () async {
+                        // Perform logout logic
+                        await _logout(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isDarkMode
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: const Icon(
+                          IconlyBold.logout,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               ListTile(
                 title: Container(
@@ -115,7 +145,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     color: isDarkMode
                         ? Colors.black.withOpacity(0.3)
                         : Colors.white.withOpacity(
-                            0.1), // Semi-transparent white background
+                            0.2), // Semi-transparent white background
                     borderRadius: BorderRadius.circular(20), // Rounded corners
                     // boxShadow: [
                     //   BoxShadow(
@@ -133,9 +163,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       child:
                           Icon(Icons.person, size: 40, color: Colors.grey[500]),
                     ),
-                    title: const Text(
-                      'David Clerisseau',
-                      style: TextStyle(color: Colors.white),
+                    title: Text(
+                      widget.fullName,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                       'Personal Info',
@@ -160,7 +193,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 200.0),
+          padding: const EdgeInsets.only(top: 220.0),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
@@ -482,7 +515,8 @@ class _AccountPageState extends State<AccountPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text('Gender', style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+          const Text('Gender',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           Row(
             children: [
               const Text('Male'),
@@ -511,4 +545,19 @@ class _AccountPageState extends State<AccountPage> {
       ),
     );
   }
+}
+
+Future<void> _logout(BuildContext context) async {
+  // Clear shared preferences (assuming token is stored here)
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.clear();
+
+  // Navigate to the login screen
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) =>
+          const LoginScreen(), // Replace IndexPage with your target page
+    ),
+  );
 }

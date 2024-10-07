@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:pharmacy/json/utility.dart';
 
 class Hcard extends StatefulWidget {
-  const Hcard({Key? key}) : super(key: key);
+  const Hcard({super.key});
+
+  
 
   @override
-  // const Hcard({super.key});
+ 
 
   @override
   State<Hcard> createState() => _HcardState();
 }
 
 class _HcardState extends State<Hcard> {
-  // const Hcard({super.key});
+  
   final List<Map<String, dynamic>> _allUsers = usersList();
 
   // This list holds the data for the list view

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pharmacy/map/flutter_map.dart';
-import 'package:pharmacy/pages/indexpage.dart';
+// import 'package:pharmacy/map/flutter_map.dart';
+// import 'package:pharmacy/pages/indexpage.dart';
 import 'package:pharmacy/pages/login_page.dart';
-import 'package:pharmacy/pages/map.dart';
-import 'package:pharmacy/pages/profile.dart';
+// import 'package:pharmacy/pages/map.dart';
+// import 'package:pharmacy/pages/profile.dart';
 import 'package:pharmacy/pages/qr_sacan_page.dart';
 import 'package:pharmacy/pages/registration_page.dart';
-import 'package:pharmacy/pages/search_page.dart';
+// import 'package:pharmacy/pages/search_page.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});

@@ -2,6 +2,7 @@ import 'dart:convert'; // For JSON parsing
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:http/http.dart' as http;
+import 'package:pharmacy/map/map_search_screen.dart';
 
 class UniversalBarcodeScanner extends StatefulWidget {
   const UniversalBarcodeScanner({super.key});
@@ -79,70 +80,95 @@ class _UniversalBarcodeScannerState extends State<UniversalBarcodeScanner> {
   }
 
   // Show bottom sheet modal with the prescription details or error
-  void _showBottomSheet(Map<String, dynamic> data) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return WillPopScope(
-          onWillPop: () async {
-            _restartScanner(); // Restart scanner when bottom sheet is closed
-            return true;
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: data.containsKey('error')
-                ? const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Error',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
+void _showBottomSheet(Map<String, dynamic> data) {
+  showModalBottomSheet(
+    context: context,
+    builder: (context) {
+      return WillPopScope(
+        onWillPop: () async {
+          _restartScanner(); // Restart scanner when bottom sheet is closed
+          return true;
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: data.containsKey('error')
+              ? const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Error',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
                       ),
-                      SizedBox(height: 10),
-                      Text('Incorrect data'),
-                    ],
-                  )
-                : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Prescription Details',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
+                    ),
+                    SizedBox(height: 10),
+                    Text('Incorrect data'),
+                  ],
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Prescription Details',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                          'Patient Name: ${data['patient']['name']['first']} ${data['patient']['name']['last']}'),
-                      Text('Age: ${data['patient']['age']}'),
-                      Text('Gender: ${data['patient']['gender']}'),
-                      Text('Phone: ${data['patient']['phonenumber']}'),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Medications:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                        'Patient Name: ${data['patient']['name']['first']} ${data['patient']['name']['last']}'),
+                    Text('Age: ${data['patient']['age']}'),
+                    Text('Gender: ${data['patient']['gender']}'),
+                    Text('Phone: ${data['patient']['phonenumber']}'),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Medications:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    ...?data['medications']?.map<Widget>((medication) => Text(
+                        '• ${medication['medicationName']} - ${medication['dosage']}')),
+                    const SizedBox(height: 10),
+                    Text(
+                        'Prescribed by: Dr. ${data['physician']['name']['first']} ${data['physician']['name']['last']}'),
+                    Text(
+                        'Physician Phone: ${data['physician']['phonenumber']}'),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Extract medicine names to pass to the map screen
+                          List<String> medicineNames = data['medications']
+                              .map<String>((medication) =>
+                                  medication['medicationName'] as String)
+                              .toList();
+
+                          // Navigate to the map screen with the medicines
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MapScreen(
+                                filteredPharmacies: [], // Pass your filtered pharmacies here
+                                searchedMedicines: medicineNames, // Pass medicine names
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Find Pharmacies'),
                       ),
-                      ...?data['medications']?.map<Widget>((medication) => Text(
-                          '• ${medication['medicationName']} - ${medication['dosage']}')),
-                      const SizedBox(height: 10),
-                      Text(
-                          'Prescribed by: Dr. ${data['physician']['name']['first']} ${data['physician']['name']['last']}'),
-                      Text(
-                          'Physician Phone: ${data['physician']['phonenumber']}'),
-                    ],
-                  ),
-          ),
-        );
-      },
-    ).whenComplete(() {
-      _restartScanner(); // Restart scanner after bottom sheet is closed
-    });
-  }
+                    ),
+                  ],
+                ),
+        ),
+      );
+    },
+  ).whenComplete(() {
+    _restartScanner(); // Restart scanner after bottom sheet is closed
+  });
+}
+
 
   void _restartScanner() {
     setState(() {
