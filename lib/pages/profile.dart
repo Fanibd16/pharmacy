@@ -550,7 +550,9 @@ class _AccountPageState extends State<AccountPage> {
 Future<void> _logout(BuildContext context) async {
   // Clear shared preferences (assuming token is stored here)
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.clear();
+  // await prefs.clear();
+  await prefs.remove('token'); // Remove the token
+  await prefs.remove('stayLoggedIn'); 
 
   // Navigate to the login screen
   Navigator.pushReplacement(
