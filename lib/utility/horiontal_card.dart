@@ -12,7 +12,7 @@ class Hcard extends StatefulWidget {
 
 class _HcardState extends State<Hcard> {
   // API URL (replace with your local API address)
-  final String apiUrl = 'http://192.168.137.5:5000/api/pharmacy-manager/all';
+  final String apiUrl = 'http://192.168.137.42:5000/api/pharmacy-manager/all';
 
   // Fetch data from the local API
   Future<List<dynamic>> fetchPharmacies() async {

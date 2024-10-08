@@ -386,7 +386,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => IndexPage(token: myToken),
+          builder: (context) => IndexPage(token: myToken, languageCode: '', onChangeLanguage: (String ) {  },),
         ),
       );
     } else {

@@ -5,10 +5,15 @@ import 'package:pharmacy/pages/search_page.dart';
 import 'package:pharmacy/utility/horiontal_card.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:intl/intl.dart'; // Import the intl package for date formatting
+import 'package:pharmacy/utility/localization_lang.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // For accessing preferences
 
 class HomePage extends StatefulWidget {
   final String firstName; // Changed from email to first name
-  const HomePage({super.key, required this.firstName});
+  final String languageCode; // Add language code parameter
+
+  const HomePage(
+      {super.key, required this.firstName, required this.languageCode});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -16,6 +21,38 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool _isBalanceVisible = true;
+  String language = 'en'; // Default language code
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLanguagePreference(); // Fetch language preference on init
+  }
+
+  Future<void> _loadLanguagePreference() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      language = prefs.getString('languageCode') ??
+          widget
+              .languageCode; // Load from shared preferences or default to passed value
+    });
+  }
+
+  String _translate(String key) {
+    String langCode = language == 'en'
+        ? 'en'
+        : 'am'; // Use language code to get the right translation
+    return localizedText[langCode]?[key] ?? key;
+  }
+
+  Future<void> showNoNotificationDialog(BuildContext context) async {
+    await showOkAlertDialog(
+      context: context,
+      title: _translate('notification'), // Localized title
+      message: _translate('no_notification'), // Localized message
+      okLabel: 'OK',
+    );
+  }
 
   void _toggleBalanceVisibility() {
     setState(() {
@@ -54,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Hi, ${widget.firstName}', // Greet the user
+                                '${_translate('greeting')}, ${widget.firstName}', // Localized greeting
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 24,
@@ -102,13 +139,14 @@ class _HomePageState extends State<HomePage> {
                             color: Colors.white.withOpacity(0.9),
                             borderRadius: BorderRadius.circular(50.0),
                           ),
-                          child: const Row(
+                          child: Row(
                             children: [
-                              SizedBox(width: 15),
-                              Icon(IconlyLight.search),
-                              SizedBox(width: 10),
-                              Text('Search'),
-                              Spacer(),
+                              const SizedBox(width: 15),
+                              const Icon(IconlyLight.search),
+                              const SizedBox(width: 10),
+                              Text(_translate(
+                                  'search')), // Localized search text
+                              const Spacer(),
                             ],
                           ),
                         ),
@@ -125,15 +163,15 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     height: 600,
-                    child: const Padding(
-                      padding: EdgeInsets.only(top: 25.0),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 25.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TabBar(
                             labelColor: Colors.black,
                             unselectedLabelColor: Colors.grey,
-                            indicator: BoxDecoration(
+                            indicator: const BoxDecoration(
                               border: Border(
                                 bottom: BorderSide(
                                   color: Color(0xff674fff),
@@ -144,8 +182,9 @@ class _HomePageState extends State<HomePage> {
                             tabs: [
                               Tab(
                                 child: Text(
-                                  'Popular',
-                                  style: TextStyle(
+                                  _translate(
+                                      'popular'), // Localized text for 'Popular'
+                                  style: const TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -153,8 +192,8 @@ class _HomePageState extends State<HomePage> {
                               ),
                               Tab(
                                 child: Text(
-                                  'Map',
-                                  style: TextStyle(
+                                  _translate('map'), // Localized text for 'Map'
+                                  style: const TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -162,7 +201,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ],
                           ),
-                          Expanded(
+                          const Expanded(
                             child: TabBarView(
                               children: [
                                 Padding(
@@ -185,13 +224,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-}
-
-Future<void> showNoNotificationDialog(BuildContext context) async {
-  await showOkAlertDialog(
-    context: context,
-    title: 'Notification',
-    message: 'No notification',
-    okLabel: 'OK',
-  );
 }

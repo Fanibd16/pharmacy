@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:quickalert/quickalert.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -43,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       QuickAlert.show(
         context: context,
         type: QuickAlertType.info,
-         confirmBtnColor: const Color.fromARGB(255, 255, 200, 1),
+        confirmBtnColor: const Color.fromARGB(255, 255, 200, 1),
         title: 'Info',
         text: 'All fields must be filled!',
         confirmBtnText: 'Okay',
@@ -64,7 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     // Proceed with the sign-up request
     final response = await http.post(
-      Uri.parse('http://192.168.137.25:4000/api/auth/register'),
+      Uri.parse('http://172.23.32.1:4000/api/auth/register'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

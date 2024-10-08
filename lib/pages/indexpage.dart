@@ -6,13 +6,19 @@ import 'package:pharmacy/pages/history_page.dart';
 import 'package:pharmacy/pages/homepage.dart';
 import 'package:pharmacy/pages/profile.dart';
 import 'package:pharmacy/pages/qr_sacan_page.dart';
+// import 'package:pharmacy/pages/settings_page.dart';
+import 'package:pharmacy/utility/localization_lang.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum _SelectedTab { home, add, favorite, person }
 
 class IndexPage extends StatefulWidget {
   final String token;
-  const IndexPage({super.key, required this.token});
+final Function(String) onChangeLanguage; 
+  const IndexPage({
+    super.key,
+    required this.token, required String languageCode, required this.onChangeLanguage,
+  });
 
   @override
   State<IndexPage> createState() => _IndexPageState();
@@ -22,43 +28,54 @@ class _IndexPageState extends State<IndexPage> {
   _SelectedTab _selectedTab = _SelectedTab.home;
   String firstName = '';
   String fullName = '';
+  String language = 'en'; // Default to English; initialize directly here
 
   @override
   void initState() {
     super.initState();
+    _loadLanguagePreference(); // Fetch the language preference
     _getFirstNameFromToken(widget.token); // Fetch the first name on init
   }
 
-Future<void> _getFirstNameFromToken(String token) async {
-  try {
-    // Decode the JWT token
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+  Future<void> _getFirstNameFromToken(String token) async {
+    try {
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      String fullName = decodedToken['fullName'] ?? "User";
+      List<String> nameParts = fullName.split(' ');
+      String firstName = nameParts.isNotEmpty ? nameParts[0] : "User";
 
-    // Get the full name from the decoded token, defaulting to "User" if not found
-    String fullName = decodedToken['fullName'] ?? "User";
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('firstName', firstName); // Save first name
+      await prefs.setString('fullName', fullName); // Save full name
 
-    // Split the full name by spaces
-    List<String> nameParts = fullName.split(' ');
-
-    // Extract the first name (if it exists)
-    String firstName = nameParts.isNotEmpty ? nameParts[0] : "User";
-
-    // Save the first name to SharedPreferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('firstName', firstName); // Save first name
-    await prefs.setString('fullName', fullName); // Save full name
-
-    // Update the state with the fetched first name and full name
-    setState(() {
-      this.firstName = firstName;
-      this.fullName = fullName;
-    });
-  } catch (e) {
-    // Handle any exceptions that occur during token decoding or preferences saving
-    print('Error decoding token or saving preferences: $e');
+      setState(() {
+        this.firstName = firstName;
+        this.fullName = fullName;
+      });
+    } catch (e) {
+      print('Error decoding token or saving preferences: $e');
+    }
   }
-}
 
+  Future<void> _loadLanguagePreference() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      language = prefs.getString('languageCode') ?? language; // Use the initialized value or fallback
+    });
+  }
+
+  Future<void> _changeLanguage(String langCode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('languageCode', langCode);
+    setState(() {
+      language = langCode;
+    });
+  }
+
+  String _translate(String key) {
+    String langCode = language == 'en' ? 'en' : 'am';
+    return localizedText[langCode]?[key] ?? key;
+  }
 
   void _handleIndexChanged(int index) {
     setState(() {
@@ -69,13 +86,16 @@ Future<void> _getFirstNameFromToken(String token) async {
   Widget _getPageForTab(_SelectedTab tab) {
     switch (tab) {
       case _SelectedTab.home:
-        return HomePage(firstName: firstName);
+        return HomePage(firstName: firstName, languageCode: language); // Pass the language code
       case _SelectedTab.add:
         return const UniversalBarcodeScanner();
       case _SelectedTab.favorite:
         return const HistoryScreen();
       case _SelectedTab.person:
-        return SettingsPage(fullName: fullName);
+        return SettingsPage(
+          fullName: fullName,
+          onChangeLanguage: _changeLanguage, // Pass the language change callback
+        );
       default:
         return const SizedBox.shrink();
     }
@@ -93,19 +113,19 @@ Future<void> _getFirstNameFromToken(String token) async {
         items: [
           FlashyTabBarItem(
             icon: const Icon(IconlyLight.home),
-            title: const Text('Home'),
+            title: Text(_translate('home')), // Localized title
           ),
           FlashyTabBarItem(
             icon: const Icon(IconlyLight.scan),
-            title: const Text('Scan'),
+            title: Text(_translate('scan')), // Localized title
           ),
           FlashyTabBarItem(
             icon: const Icon(IconlyLight.activity),
-            title: const Text('History'),
+            title: Text(_translate('history')), // Localized title
           ),
           FlashyTabBarItem(
             icon: const Icon(IconlyLight.profile),
-            title: const Text('Profile'),
+            title: Text(_translate('profile')), // Localized title
           ),
         ],
       ),

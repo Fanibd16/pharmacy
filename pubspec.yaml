@@ -58,6 +58,9 @@ dependencies:
   # qr_code_scanner: ^1.0.1
   mobile_scanner: ^5.2.3
   adaptive_dialog: ^2.2.1+2
+  flutter_localizations:
+    sdk: flutter
+  provider: ^6.1.2
   # mapbox_gl: ^0.16.0
   # qr_code_scanner: ^1.0.1
   # qr_code_scanner: ^1.0.1
@@ -96,6 +99,8 @@ flutter:
     - assets/icon_map/ph_marker.png
     - assets/icon/searching.png
     - assets/social.png
+    - assets/lang/en.json
+    - assets/lang/am.json
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

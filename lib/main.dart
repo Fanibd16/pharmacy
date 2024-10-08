@@ -1,35 +1,8 @@
-// import 'package:flutter/material.dart';
-// import 'package:pharmacy/onboarding/onboarding_screen.dart';
-
-// void main() {
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Pharmacy',
-//       theme: ThemeData(
-//           // primarySwatch: Colors.blue,
-//           ),
-//       home: const OnboardingScreen(),
-//     );
-//   }
-// }
-
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:pharmacy/onboarding/onboarding_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pharmacy/pages/login_page.dart'; // Import your login page
 import 'package:pharmacy/pages/indexpage.dart'; // Import your index page
+import 'package:pharmacy/utility/localization_lang.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -45,11 +18,13 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _isLoggedIn = false;
   String? _token;
+  String _languageCode = 'en'; // Default language
 
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
+    _loadLanguage();
   }
 
   Future<void> _checkLoginStatus() async {
@@ -63,14 +38,39 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future<void> _loadLanguage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? langCode = prefs.getString('languageCode') ?? 'en'; // Default to English
+    setState(() {
+      _languageCode = langCode; // Load the saved language code
+    });
+  }
+
+ void _changeLanguage(String langCode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('languageCode', langCode);
+    setState(() {
+      _languageCode = langCode; // Update the state with the new language
+    });
+}
+
+  String _translate(String key) {
+    return localizedText[_languageCode]?[key] ?? key; // Return the localized text
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Pharmacy',
       theme: ThemeData(),
-      // Use the stored token for navigation if the user is logged in
-      home: _isLoggedIn ? IndexPage(token: _token!) : const OnboardingScreen(),
+      home: _isLoggedIn
+          ? IndexPage(
+              token: _token!, // Unwrap the token safely, ensure _isLoggedIn is true
+              languageCode: _languageCode, // Pass language code to IndexPage
+              onChangeLanguage: _changeLanguage, // Pass language change callback
+            )
+          : const OnboardingScreen(),
     );
   }
 }

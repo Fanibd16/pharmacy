@@ -1,0 +1,20 @@
+{
+    "profile": "Profile",
+    "settings": "Settings",
+    "language": "Language",
+    "notifications": "Notifications",
+    "dark_mode": "Dark Mode",
+    "light_mode": "Light Mode",
+    "help": "Help",
+    "logout": "Logout",
+    "personal_info": "Personal Info",
+    "account": "Account",
+    "name": "Name",
+    "age": "Age",
+    "email": "Email",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "upload_image": "Upload Image"
+  }
+  

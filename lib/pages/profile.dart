@@ -4,14 +4,18 @@ import 'package:http/http.dart' as http;
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pharmacy/pages/login_page.dart';
+import 'package:pharmacy/utility/localization_lang.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
+// Import the localization map
 
 class SettingsPage extends StatefulWidget {
   final String fullName;
+  final Function(String) onChangeLanguage; // Add callback for language change
 
-  const SettingsPage({super.key, required this.fullName});
+  const SettingsPage(
+      {super.key, required this.fullName, required this.onChangeLanguage});
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -20,7 +24,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool isDarkMode = false;
   bool isNotificationsOn = true;
-  String language = 'English';
+  String language = 'en'; // Default language code
 
   @override
   void initState() {
@@ -32,6 +36,8 @@ class _SettingsPageState extends State<SettingsPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = prefs.getBool('isDarkMode') ?? false;
+      language = prefs.getString('languageCode') ??
+          'en'; // Default to English if not set
     });
   }
 
@@ -43,35 +49,27 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-  void _openLanguageBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('English'),
-              onTap: () {
-                setState(() {
-                  language = 'English';
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Amharic'),
-              onTap: () {
-                setState(() {
-                  language = 'Amharic';
-                });
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
+  Future<void> _changeLanguage(String langCode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Remove the current language state
+    await prefs.remove('languageCode');
+
+    // Add the selected language
+    await prefs.setString('languageCode', langCode);
+
+    setState(() {
+      language = langCode; // Store the language code directly
+    });
+
+    // Call the callback to notify the parent about the language change
+    widget.onChangeLanguage(langCode);
+  }
+
+  String _translate(String key) {
+    String langCode =
+        language == 'en' ? 'en' : 'am'; // Use the language code directly
+    return localizedText[langCode]?[key] ?? key;
   }
 
   void _openHelpBottomSheet() {
@@ -81,6 +79,33 @@ class _SettingsPageState extends State<SettingsPage> {
         return const Column(
           mainAxisSize: MainAxisSize.min,
           children: [Center(child: Text('Help'))],
+        );
+      },
+    );
+  }
+
+  void _openLanguageBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('English'),
+              onTap: () async {
+                await _changeLanguage('en');
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('አማርኛ'),
+              onTap: () async {
+                await _changeLanguage('am');
+                Navigator.pop(context);
+              },
+            ),
+          ],
         );
       },
     );
@@ -102,16 +127,14 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           child: Column(
             children: [
-              const SizedBox(
-                height: 45.5,
-              ),
+              const SizedBox(height: 45.5),
               Padding(
                 padding: const EdgeInsets.only(top: 8, left: 12, right: 12),
                 child: Row(
                   children: [
-                    const Text(
-                      'Profile',
-                      style: TextStyle(
+                    Text(
+                      _translate('profile'),
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.bold),
@@ -131,7 +154,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         padding: const EdgeInsets.all(12),
                         child: const Icon(
-                          IconlyBold.logout,
+                          Icons.logout,
                           color: Colors.white,
                         ),
                       ),
@@ -144,16 +167,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   decoration: BoxDecoration(
                     color: isDarkMode
                         ? Colors.black.withOpacity(0.3)
-                        : Colors.white.withOpacity(
-                            0.2), // Semi-transparent white background
-                    borderRadius: BorderRadius.circular(20), // Rounded corners
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //     color: Colors.black.withOpacity(0.2), // Shadow effect
-                    //     blurRadius: 10,
-                    //     spreadRadius: 1,
-                    //   ),
-                    // ],
+                        : Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(10),
@@ -171,7 +186,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      'Personal Info',
+                      _translate('personalInfo'),
                       style: TextStyle(color: Colors.grey[200]),
                     ),
                     trailing: const Icon(
@@ -209,22 +224,20 @@ class _SettingsPageState extends State<SettingsPage> {
                   const SizedBox(height: 40),
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
-                    child: Text('Settings',
+                    child: Text(_translate('settings'),
                         style: TextStyle(
                             color: isDarkMode ? Colors.white : Colors.black,
                             fontSize: 18,
-                            fontWeight: FontWeight.bold)
-                        // style: TextStyle(),
-                        ),
+                            fontWeight: FontWeight.bold)),
                   ),
                   const SizedBox(height: 20),
                   ListTile(
                     leading: Icon(Icons.language,
                         color: isDarkMode ? Colors.white : Colors.black),
-                    title: Text('Language',
+                    title: Text(_translate('language'),
                         style: TextStyle(
                             color: isDarkMode ? Colors.white : Colors.black)),
-                    subtitle: Text(language,
+                    subtitle: Text(language == 'en' ? 'English' : 'አማርኛ',
                         style: TextStyle(
                             color: isDarkMode ? Colors.grey : Colors.black)),
                     onTap: _openLanguageBottomSheet,
@@ -234,17 +247,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       thickness: 1,
                       indent: 28,
                       endIndent: 28,
-                      // color: Color(0xff674fff)),
                       color: Colors.grey),
                   SwitchListTile(
                     title: Row(
                       children: [
-                        Icon(IconlyLight.notification,
+                        Icon(Icons.notifications,
                             color: isDarkMode ? Colors.white : Colors.black),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text('Notifications',
+                        const SizedBox(width: 10),
+                        Text(_translate('notifications'),
                             style: TextStyle(
                                 color:
                                     isDarkMode ? Colors.white : Colors.black)),
@@ -261,15 +271,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       thickness: 1,
                       indent: 28,
                       endIndent: 28,
-                      // color: Color(0xff674fff)),
                       color: Colors.grey),
                   SwitchListTile(
-                    title: Text(isDarkMode ? 'Light Mode' : 'Dark Mode',
+                    title: Text(
+                        isDarkMode
+                            ? _translate('lightMode')
+                            : _translate('darkMode'),
                         style: TextStyle(
                             color: isDarkMode ? Colors.white : Colors.black)),
                     value: isDarkMode,
                     onChanged: _toggleDarkMode,
-                    // activeColor: Colors.deepPurple,
                     secondary: Icon(
                         isDarkMode
                             ? Icons.wb_sunny_outlined
@@ -280,12 +291,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       thickness: 1,
                       indent: 28,
                       endIndent: 28,
-                      // color: Color(0xff674fff)),
                       color: Colors.grey),
                   ListTile(
                     leading: Icon(Icons.help_outline,
                         color: isDarkMode ? Colors.white : Colors.black),
-                    title: Text('Help',
+                    title: Text(_translate('help'),
                         style: TextStyle(
                             color: isDarkMode ? Colors.white : Colors.black)),
                     onTap: _openHelpBottomSheet,
@@ -300,6 +310,20 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -552,7 +576,7 @@ Future<void> _logout(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   // await prefs.clear();
   await prefs.remove('token'); // Remove the token
-  await prefs.remove('stayLoggedIn'); 
+  await prefs.remove('stayLoggedIn');
 
   // Navigate to the login screen
   Navigator.pushReplacement(

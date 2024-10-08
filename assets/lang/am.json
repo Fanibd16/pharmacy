@@ -1,0 +1,20 @@
+{
+    "profile": "መገለጫ",
+    "settings": "ቅንብሮች",
+    "language": "ቋንቋ",
+    "notifications": "ማሳወቂያዎች",
+    "dark_mode": "ጨለማ ሞድ",
+    "light_mode": "ብርሃን ሞድ",
+    "help": "እርዳታ",
+    "logout": "ውጣ",
+    "personal_info": "ግለሰቦች መረጃ",
+    "account": "መለያ",
+    "name": "ስም",
+    "age": "እድሜ",
+    "email": "ኢሜል",
+    "gender": "ፆታ",
+    "male": "ወንድ",
+    "female": "ሴት",
+    "upload_image": "ምስል ስቀል"
+  }
+  
