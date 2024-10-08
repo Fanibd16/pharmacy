@@ -1,13 +1,152 @@
-import 'package:flutter/material.dart';
 
-class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key});
+
+// import 'dart:convert';
+// import 'package:flutter/material.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+
+// class ScanHistoryScreen extends StatefulWidget {
+//   const ScanHistoryScreen({Key? key}) : super(key: key);
+
+//   @override
+//   _ScanHistoryScreenState createState() => _ScanHistoryScreenState();
+// }
+
+// class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
+//   List<Map<String, dynamic>> scanHistory = [];
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadScanHistory(); // Load the scan history when the screen initializes
+//   }
+
+//   Future<void> _loadScanHistory() async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     String? historyString = prefs.getString('scanHistory');
+//     if (historyString != null) {
+//       setState(() {
+//         scanHistory = List<Map<String, dynamic>>.from(jsonDecode(historyString));
+//       });
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Scan History'),
+//         backgroundColor: const Color(0xff674fff),
+//       ),
+//       body: scanHistory.isEmpty
+//           ? const Center(child: Text('No scan history available'))
+//           : ListView.builder(
+//               itemCount: scanHistory.length,
+//               itemBuilder: (context, index) {
+//                 var scanData = scanHistory[index];
+//                 return ScanHistoryCard(
+//                   scanData: scanData,
+//                   onPressed: () {
+//                     _showScanDetails(scanData);
+//                   },
+//                 );
+//               },
+//             ),
+//     );
+//   }
+
+//   // Function to show scan details
+//   void _showScanDetails(Map<String, dynamic> scanData) {
+//     showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return AlertDialog(
+//           title: const Text('Scan Details'),
+//           content: SingleChildScrollView(
+//             child: ListBody(
+//               children: <Widget>[
+//                 Text('Scanned on: ${scanData['dateTime']}'),
+//                 if (scanData['data'] != null)
+//                   ...[
+//                     Text('Patient Name: ${scanData['data']['patient']['name']['first']} ${scanData['data']['patient']['name']['last']}'),
+//                     Text('Age: ${scanData['data']['patient']['age']}'),
+//                     Text('Medications:'),
+//                     for (var med in scanData['data']['medications'])
+//                       Text('• ${med['medicationName']} - ${med['dosage']}'),
+//                   ]
+//                 else
+//                   const Text('Error: No valid scan data found.'),
+//               ],
+//             ),
+//           ),
+//           actions: <Widget>[
+//             TextButton(
+//               child: const Text('Close'),
+//               onPressed: () {
+//                 Navigator.of(context).pop();
+//               },
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+// }
+
+// class ScanHistoryCard extends StatelessWidget {
+//   final Map<String, dynamic> scanData;
+//   final VoidCallback onPressed;
+
+//   const ScanHistoryCard({
+//     required this.scanData,
+//     required this.onPressed,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Card(
+//       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+//       child: ListTile(
+//         title: Text('Scan from ${scanData['dateTime']}'),
+//         subtitle: Text('Prescription ID: ${scanData['data']['prescriptionId'] ?? 'N/A'}'),
+//         trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+//         onTap: onPressed,
+//       ),
+//     );
+//   }
+// }
+
+
+
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class ScanHistoryScreen extends StatefulWidget {
+  const ScanHistoryScreen({super.key});
 
   @override
-  _HistoryScreenState createState() => _HistoryScreenState();
+  _ScanHistoryScreenState createState() => _ScanHistoryScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen> {
+class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
+  List<Map<String, dynamic>> scanHistory = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadScanHistory(); // Load the scan history when the screen initializes
+  }
+
+  Future<void> _loadScanHistory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? historyString = prefs.getString('scanHistory');
+    if (historyString != null) {
+      setState(() {
+        scanHistory = List<Map<String, dynamic>>.from(jsonDecode(historyString));
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,21 +185,96 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
               height: double.infinity,
               width: double.infinity,
-              child: const SingleChildScrollView(
-                // Wrap content in scrollable view
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 18.0, right: 18),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Center(child: Text('No History!!'))],
+              child: scanHistory.isEmpty
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 20.0),
+                        child: Text('No scan history available',
+                            style: TextStyle(fontSize: 18)),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: SingleChildScrollView(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: scanHistory.length,
+                          itemBuilder: (context, index) {
+                            var scanData = scanHistory[index];
+                            return ScanHistoryCard(
+                              scanData: scanData,
+                              onPressed: () {
+                                _showScanDetails(scanData);
+                              },
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Function to show scan details
+  void _showScanDetails(Map<String, dynamic> scanData) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Scan Details'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Scanned on: ${scanData['dateTime']}'),
+                if (scanData['data'] != null) ...[
+                  Text(
+                      'Patient Name: ${scanData['data']['patient']['name']['first']} ${scanData['data']['patient']['name']['last']}'),
+                  Text('Age: ${scanData['data']['patient']['age']}'),
+                  const Text('Medications:'),
+                  for (var med in scanData['data']['medications'])
+                    Text('• ${med['medicationName']} - ${med['dosage']}'),
+                ] else
+                  const Text('Error: No valid scan data found.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class ScanHistoryCard extends StatelessWidget {
+  final Map<String, dynamic> scanData;
+  final VoidCallback onPressed;
+
+  const ScanHistoryCard({
+    required this.scanData,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: ListTile(
+        title: Text('Scan from ${scanData['dateTime']}'),
+        subtitle: Text(
+            'Prescription ID: ${scanData['data']['prescriptionId'] ?? 'N/A'}'),
+        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+        onTap: onPressed,
       ),
     );
   }

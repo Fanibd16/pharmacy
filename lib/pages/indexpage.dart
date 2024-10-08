@@ -90,7 +90,7 @@ class _IndexPageState extends State<IndexPage> {
       case _SelectedTab.add:
         return const UniversalBarcodeScanner();
       case _SelectedTab.favorite:
-        return const HistoryScreen();
+        return const ScanHistoryScreen();
       case _SelectedTab.person:
         return SettingsPage(
           fullName: fullName,
