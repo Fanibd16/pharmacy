@@ -7,9 +7,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:label="pharmacy"
+        android:label="Pharmacy finder"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/ic_launcher">
           <!-- <meta-data
               android:resource="@style/NormalTheme"
               android:name="com.google.android.geo.API_KEY"
