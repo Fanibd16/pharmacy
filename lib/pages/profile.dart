@@ -251,7 +251,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   SwitchListTile(
                     title: Row(
                       children: [
-                        Icon(Icons.notifications,
+                        Icon(IconlyLight.notification,
                             color: isDarkMode ? Colors.white : Colors.black),
                         const SizedBox(width: 10),
                         Text(_translate('notifications'),
@@ -310,20 +310,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -577,6 +563,8 @@ Future<void> _logout(BuildContext context) async {
   // await prefs.clear();
   await prefs.remove('token'); // Remove the token
   await prefs.remove('stayLoggedIn');
+  // Remove the scan history
+  await prefs.remove('scanHistory');
 
   // Navigate to the login screen
   Navigator.pushReplacement(

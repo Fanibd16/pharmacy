@@ -9,7 +9,7 @@
     <application
         android:label="pharmacy"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
           <!-- <meta-data
               android:resource="@style/NormalTheme"
               android:name="com.google.android.geo.API_KEY"

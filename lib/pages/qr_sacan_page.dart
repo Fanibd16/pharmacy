@@ -277,14 +277,6 @@
 //   }
 // }
 
-
-
-
-
-
-
-
-
 import 'dart:convert'; // For JSON parsing
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -345,7 +337,7 @@ class _UniversalBarcodeScannerState extends State<UniversalBarcodeScanner> {
         String baseUrl =
             "http://localhost:3000/pharmacist/dashboard/prescription/";
         String newBaseUrl =
-            "http://192.168.137.42:5000/api/prescription/mobileQr/";
+            "http://192.168.137.5:5000/api/prescription/mobileQr/";
 
         if (originalUrl.startsWith(baseUrl)) {
           _controller.stop();
