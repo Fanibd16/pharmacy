@@ -35,9 +35,9 @@ class MedicineSelectorState extends State<MedicineSelector> {
       'name': 'Pharmacy A',
       'location': const LatLng(11.0497, 39.7473),
       'medicines': [
-        {'medicine': 'Painkiller', 'price': '10 USD'},
-        {'medicine': 'Antibiotic', 'price': '20 USD'},
-        {'medicine': 'Vitamins', 'price': '5 USD'},
+        {'medicine': 'Painkiller', 'price': '10 ETB'},
+        {'medicine': 'Antibiotic', 'price': '20 ETB'},
+        {'medicine': 'Vitamins', 'price': '5 ETB'},
       ],
 
     },
@@ -45,9 +45,9 @@ class MedicineSelectorState extends State<MedicineSelector> {
       'name': 'Pharmacy B',
       'location': const LatLng(11.0477, 39.7489),
       'medicines': [
-        {'medicine': 'Paracetamol', 'price': '12 USD'},
-        {'medicine': 'Cough Syrup', 'price': '18 USD'},
-        {'medicine': 'Antibiotic', 'price': '15 USD'},
+        {'medicine': 'Paracetamol', 'price': '12 ETB'},
+        {'medicine': 'Cough Syrup', 'price': '18 ETB'},
+        {'medicine': 'Antibiotic', 'price': '15 ETB'},
       ],
 
     },
@@ -55,8 +55,8 @@ class MedicineSelectorState extends State<MedicineSelector> {
       'name': 'Pharmacy C',
       'location': const LatLng(11.0518, 39.7496),
       'medicines': [
-        {'medicine': 'Vitamins', 'price': '8 USD'},
-        {'medicine': 'Cough Syrup', 'price': '15 USD'},
+        {'medicine': 'Vitamins', 'price': '8 ETB'},
+        {'medicine': 'Cough Syrup', 'price': '15 ETB'},
       ],
 
     }

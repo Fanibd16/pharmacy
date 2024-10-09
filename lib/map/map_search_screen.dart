@@ -142,7 +142,7 @@ class _MapScreenState extends State<MapScreen> {
                           )
                         : const Text('No matching medicines found.'),
                     const SizedBox(height: 8),
-                    Text('Total Price: $totalPrice USD'),
+                    Text('Total Price: $totalPrice ETB'),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
