@@ -39,7 +39,7 @@ class MedicineSelectorState extends State<MedicineSelector> {
         {'medicine': 'Antibiotic', 'price': '20 USD'},
         {'medicine': 'Vitamins', 'price': '5 USD'},
       ],
-      'totalPrice': '35 USD'
+
     },
     {
       'name': 'Pharmacy B',
@@ -49,7 +49,7 @@ class MedicineSelectorState extends State<MedicineSelector> {
         {'medicine': 'Cough Syrup', 'price': '18 USD'},
         {'medicine': 'Antibiotic', 'price': '15 USD'},
       ],
-      'totalPrice': '45 USD'
+
     },
     {
       'name': 'Pharmacy C',
@@ -58,7 +58,7 @@ class MedicineSelectorState extends State<MedicineSelector> {
         {'medicine': 'Vitamins', 'price': '8 USD'},
         {'medicine': 'Cough Syrup', 'price': '15 USD'},
       ],
-      'totalPrice': '23 USD'
+
     }
   ];
 
@@ -190,3 +190,6 @@ class MedicineSelectorState extends State<MedicineSelector> {
     );
   }
 }
+
+
+

@@ -80,6 +80,7 @@ class _HcardState extends State<Hcard> {
                 Text('Manager: ${pharmacy['pmName']}'),
                 Text('Email: ${pharmacy['user']['email']}'),
                 Text('Phone: ${pharmacy['user']['phoneNumber']}'),
+                Text('latitude: ${pharmacy['addressDetails']['latitude']}'),
                 Text('Experience: ${pharmacy['experience']} years'),
                 if (pharmacy['products'] != null &&
                     pharmacy['products'].isNotEmpty) ...[
